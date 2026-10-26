@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Legal Documents | شروط الخدمة وسياسة الخصوصية</title>
+  <!-- Google Fonts: Inter & Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            discord: {
+              DEFAULT: '#5865F2',
+              hover: '#4752C4',
+              dark: '#1e2029',
+              darker: '#13141a',
+              card: '#1a1d26',
+              border: '#2c303f'
+            }
+          },
+          fontFamily: {
+            sans: ['Cairo', 'Inter', 'sans-serif'],
+            en: ['Inter', 'Cairo', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #0d0e12;
+      color: #e2e8f0;
+      font-family: 'Cairo', 'Inter', sans-serif;
+    }
+    .blurple-glow {
+      box-shadow: 0 0 35px -5px rgba(88, 101, 242, 0.25);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #13141a;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #2c303f;
+      border-radius: 4px;
+    }
+    .badge-discord {
+      background: rgba(88, 101, 242, 0.12);
+      border: 1px solid rgba(88, 101, 242, 0.3);
+      color: #7983f5;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-discord selection:text-white">
+
+  <!-- Ambient Glow Effects -->
+  <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-discord/15 blur-[120px] pointer-events-none -z-10 rounded-full"></div>
+
+  <!-- Header / Navigation -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-[#0d0e12]/85 border-b border-discord-border/50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo / Name -->
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-discord flex items-center justify-center text-white text-xl shadow-lg shadow-discord/30">
+          <i class="fa-brands fa-discord"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg text-white leading-tight flex items-center gap-2">
+            <span id="botNameDisplay">اسم البوت الخاص بك</span>
+            <span class="text-xs px-2 py-0.5 rounded-full badge-discord font-medium">BOT</span>
+          </h1>
+          <p class="text-xs text-slate-400" id="legalDocsLabel">الوثائق القانونية والشروط</p>
+        </div>
+      </div>
+
+      <!-- Center Tabs (ToS vs Privacy) -->
+      <div class="flex items-center bg-[#151720] border border-discord-border p-1 rounded-xl">
+        <button id="tabTermsBtn" onclick="switchSection('terms')" class="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 bg-discord text-white shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-file-contract text-xs"></i>
+          <span class="tab-text-terms">شروط الخدمة (ToS)</span>
+        </button>
+        <button id="tabPrivacyBtn" onclick="switchSection('privacy')" class="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-white flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-xs"></i>
+          <span class="tab-text-privacy">سياسة الخصوصية</span>
+        </button>
+      </div>
+
+      <!-- Controls: Language Toggle & Copy Link -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleLanguage()" class="px-3 py-1.5 rounded-lg bg-discord-card border border-discord-border hover:border-discord text-xs font-medium text-slate-300 transition-colors flex items-center gap-1.5" title="Switch Language / تغيير اللغة">
+          <i class="fa-solid fa-globe text-discord"></i>
+          <span id="langBtnText">English</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-discord text-white px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2.5 text-sm font-medium">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toastMsg">تم نسخ الرابط بنجاح!</span>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 py-10">
+
+    <!-- Top Info Banner -->
+    <div class="p-6 rounded-2xl bg-gradient-to-r from-discord-card to-[#161822] border border-discord-border/80 blurple-glow mb-8">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div class="flex flex-wrap items-center gap-2.5 mb-2">
+            <span class="px-3 py-1 text-xs font-semibold rounded-full badge-discord flex items-center gap-1.5">
+              <i class="fa-solid fa-check-double text-[11px]"></i>
+              <span id="verifiedLabel">متوافق مع سياسات Discord 2026</span>
+            </span>
+            <span class="text-xs text-slate-400 flex items-center gap-1.5">
+              <i class="fa-regular fa-clock"></i>
+              <span id="updatedDateLabel">آخر تحديث: 27 أكتوبر 2026</span>
+            </span>
+          </div>
+          <h2 id="mainHeaderTitle" class="text-2xl sm:text-3xl font-extrabold text-white">اتفاقية استخدام البوت والخصوصية</h2>
+          <p id="mainHeaderSubtitle" class="text-sm text-slate-400 mt-1">توضح هذه الصفحة الشروط والقواعد المتبعة لاستخدام البوت وكيفية حماية بياناتك.</p>
+        </div>
+
+        <!-- Quick Copy Direct URLs for Discord Portal -->
+        <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <button onclick="copyCurrentUrl('terms')" class="px-3.5 py-2 rounded-xl bg-[#222634] hover:bg-discord hover:text-white border border-discord-border text-slate-300 text-xs font-medium transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-link"></i>
+            <span id="copyTermsBtn">نسخ رابط ToS</span>
+          </button>
+          <button onclick="copyCurrentUrl('privacy')" class="px-3.5 py-2 rounded-xl bg-[#222634] hover:bg-discord hover:text-white border border-discord-border text-slate-300 text-xs font-medium transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-link"></i>
+            <span id="copyPrivacyBtn">نسخ رابط الخصوصية</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECTION 1: TERMS OF SERVICE (ToS)          -->
+    <!-- ========================================== -->
+    <section id="terms" class="space-y-6">
+      <div class="border-b border-discord-border pb-4 flex items-center justify-between">
+        <div>
+          <h3 class="text-2xl font-bold text-white flex items-center gap-3">
+            <i class="fa-solid fa-file-contract text-discord"></i>
+            <span class="terms-title">شروط الخدمة (Terms of Service)</span>
+          </h3>
+          <p class="text-sm text-slate-400 mt-1 terms-subtitle">القواعد والشروط الواجب الموافقة عليها عند دعوة واستخدام البوت داخل خادمك.</p>
+        </div>
+        <button onclick="copyCurrentUrl('terms')" class="text-xs text-slate-400 hover:text-discord transition flex items-center gap-1.5 bg-discord-card border border-discord-border px-3 py-1.5 rounded-lg">
+          <i class="fa-regular fa-copy"></i>
+          <span class="share-btn-text">مشاركة الرابط</span>
+        </button>
+      </div>
+
+      <!-- Clause 1 -->
+      <article class="p-6 rounded-2xl bg-discord-card border border-discord-border hover:border-discord/40 transition">
+        <h4 class="text-lg font-bold text-white mb-2 flex items-center gap-2.5">
+          <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-discord/20 text-discord text-xs font-bold">1</span>
+          <span class="clause-1-title">قبول الشروط (Acceptance of Terms)</span>
+        </h4>
+        <p class="text-slate-300 text-sm leading-relaxed clause-1-desc">
+          بإضافة هذا البوت إلى سيرفر الديسكورد الخاص بك، أو استخدام أي من أوامره وميزاته، فإنك تقر وتوافق على الالتزام الكامل بهذه الشروط، وكذلك الالتزام بـ 
+          <a href="https://discord.com/terms" target="_blank" class="text-discord hover:underline font-medium">شروط خدمة Discord</a> و 
+          <a href="https://discord.com/guidelines" target="_blank" class="text-discord hover:underline font-medium">إرشادات المجتمع</a>. 
+          إذا كنت لا توافق على هذه الشروط، يرجى عدم إضافة البوت أو إزالته فوراً.
+        </p>
+      </article>
+
+      <!-- Clause 2 -->
+      <article class="p-6 rounded-2xl bg-discord-card border border-discord-border hover:border-discord/40 transition">
+        <h4 class="text-lg font-bold text-white mb-2 flex items-center gap-2.5">
+          <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-discord/20 text-discord text-xs font-bold">2</span>
+          <span class="clause-2-title">الاستخدام المصرح به والمحظور (Permitted & Prohibited Use)</span>
+        </h4>
+        <div class="text-slate-300 text-sm leading-relaxed space-y-2 clause-2-desc">
+          <p>يُسمح باستخدام البوت لأغراض إدارة السيرفرات، الترفيه، أو الخدمات البرمجية المتاحة للأعضاء وفق الغرض المخصص للبوت. ويُحظر تماماً:</p>
+          <ul class="list-disc list-inside space-y-1.5 text-slate-400 mr-2">
+            <li>استغلال البوت لإرسال رسائل مزعجة (Spam) أو محاولات الاختراق وهندسة اجتماعية.</li>
+            <li>استخدام أي ثغرات برمجية لإلحاق الضرر بالبوت أو البنية التحتية أو السيرفرات الأخرى.</li>
+            <li>إعادة بيع أو تأجير أو استغلال واجهات وأوامر البوت البرمجية بدون إذن رسمي مسبق.</li>
+            <li>التحايل على قيود التحقق أو الرتب المرتبطة (Linked Roles) أو الصلاحيات المقررة.</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Clause 3 -->
+      <article class="p-6 rounded-2xl bg-discord-card border border-discord-border hover:border-discord/40 transition">
+        <h4 class="text-lg font-bold text-white mb-2 flex items-center gap-2.5">
+          <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-discord/20 text-discord text-xs font-bold">3</span>
+          <span class="clause-3-title">التوفر والتعديل على الخدمة (Service Availability & Updates)</span>
+        </h4>
+        <p class="text-slate-300 text-sm leading-relaxed clause-3-desc">
+          نسعى جاهدين لضمان عمل البوت على مدار الساعة بنسبة تشغيل عالية، ومع ذلك لا نضمن استمرارية الخدمة دون انقطاع قد ينتج عن صيانة طارئة، أو تحديثات لواجهات برمجة تطبيقات ديسكورد (Discord API)، أو انقطاع في الاستضافة. نحتفظ بالحق في تعديل أو إيقاف أي ميزة في أي وقت مع أو بدون إشعار مسبق.
+        </p>
+      </article>
+
+      <!-- Clause 4 -->
+      <article class="p-6 rounded-2xl bg-discord-card border border-discord-border hover:border-discord/40 transition">
+        <h4 class="text-lg font-bold text-white mb-2 flex items-center gap-2.5">
+          <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-discord/20 text-discord text-xs font-bold">4</span>
+          <span class="clause-4-title">إخلاء المسؤولية والحدود القانونية (Limitation of Liability)</span>
+        </h4>
+        <p class="text-slate-300 text-sm leading-relaxed clause-4-desc">
+          يتم تقديم هذا البوت "كما هو" (AS IS) دون أي ضمانات صريحة أو ضمنية. لا يتحمل مطورو البوت أي مسؤولية عن أي أضرار مباشرة أو غير مباشرة ناتجة عن سوء الاستخدام، حذف قنوات، سحب رتب، أو أي إجراءات يتخذها مشرفو السيرفرات عبر أوامر البوت.
+        </p>
+      </article>
+
+      <!-- Clause 5 -->
+      <article class="p-6 rounded-2xl bg-discord-card border border-discord-border hover:border-discord/40 transition">
+        <h4 class="text-lg font-bold text-white mb-2 flex items-center gap-2.5">
+          <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-discord/20 text-discord text-xs font-bold">5</span>
+          <span class="clause-5-title">إنهاء وإلغاء الاستخدام (Termination)</span>
+        </h4>
+        <p class="text-slate-300 text-sm leading-relaxed clause-5-desc">
+          نحتفظ بالحق في حظر أي مستخدم أو سيرفر من استخدام البوت بشكل دائم أو مؤقت في حال انتهاك هذه الشروط أو انتهاك قواعد ديسكورد الرسمية، دون سابق إنذار.
+        </p>
+      </article>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 2: PRIVACY POLICY                  -->
+    <!-- ========================================== -->
+    <section id="privacy" class="space-y-6 hidden">
+      <div class="border-b border-discord-border pb-4 flex items-center justify-between">
+        <div>
+          <h3 class="text-2xl font-bold text-white flex items-center gap-3">
+            <i class="fa-solid fa-shield-halved text-discord"></i>
+            <span class="privacy-title">سياسة الخصوصية (Privacy Policy)</span>
+          </h3>
+          <p class="text-sm text-slate-400 mt-1 privacy-subtitle">نوضح بشفافية تامة البيانات التي نجمعها، ولماذا، وكيفية حمايتها وحذفها.</p>
+        </div>
+        <button onclick="copyCurrentUrl('privacy')" class="text-xs text-slate-400 hover:text-discord transition flex items-center gap-1.5 bg-discord-card border border-discord-border px-3 py-1.5 rounded-lg">
+          <i class="fa-regular fa-copy"></i>
+          <span class="share-btn-text">مشاركة الرابط</span>
+        </button>
+      </div>
+
+      <!-- Policy 1 -->
+      <article class="p-6 rounded-2xl bg-discord-card border border-discord-border hover:border-discord/40 transition">
+        <h4 class="text-lg font-bold text-white mb-2 flex items-center gap-2.5">
+          <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-discord/20 text-discord text-xs font-bold">1</span>
+          <span class="priv-1-title">البيانات التي نقوم بجمعها (Data We Collect)</span>
+        </h4>
+        <div class="text-slate-300 text-sm leading-relaxed space-y-2 priv-1-desc">
+          <p>يقوم البوت بالوصول فقط إلى المعلومات والبيانات الضرورية للغاية لتنفيذ الوظائف المطلوبة من خلال Discord API:</p>
+          <ul class="list-disc list-inside space-y-1.5 text-slate-400 mr-2">
+            <li><strong>المعرفات الرقمية (IDs):</strong> مثل معرف المستخدم (User ID)، معرف الخادم (Guild/Server ID)، ومعرف القنوات والرتب.</li>
+            <li><strong>مدخلات الأوامر (Command Inputs):</strong> الخيارات والمعاملات التي يكتبها المستخدم عند تنفيذ أمر معين (مثل الأوامر النصية أو الـ Slash Commands).</li>
+            <li><strong>سجلات النظام الفنية (Error & Debug Logs):</strong> سجلات تقنية مؤقتة لمعالجة الأخطاء وتحسين استقرار السيرفر.</li>
+            <li><strong>بيانات التحقق (Linked Roles):</strong> في حال ربط حسابك، نتحقق فقط من البيانات المصرح بها عبر OAuth2 دون تخزين كلمات المرور.</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Policy 2 -->
+      <article class="p-6 rounded-2xl bg-discord-card border border-discord-border hover:border-discord/40 transition">
+        <h4 class="text-lg font-bold text-white mb-2 flex items-center gap-2.5">
+          <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-discord/20 text-discord text-xs font-bold">2</span>
+          <span class="priv-2-title">كيف نستخدم البيانات (How We Use Data)</span>
+        </h4>
+        <div class="text-slate-300 text-sm leading-relaxed space-y-1.5 priv-2-desc">
+          <p>تُستخدم البيانات الحصرية للأغراض التالية فقط:</p>
+          <ul class="list-disc list-inside space-y-1 text-slate-400 mr-2">
+            <li>تنفيذ الأوامر وتطبيق الإعدادات المخصصة لكل خادم (مثل قنوات الترحيب، ونظام الحماية).</li>
+            <li>التحقق من استحقاق الرتب المرتبطة (Linked Roles Verification) وفق المعايير المحددة.</li>
+            <li>تشخيص المشكلات الفنية ومنع إساءة الاستخدام والاحتيال.</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Policy 3 -->
+      <article class="p-6 rounded-2xl bg-discord-card border border-discord-border hover:border-discord/40 transition">
+        <h4 class="text-lg font-bold text-white mb-2 flex items-center gap-2.5">
+          <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-discord/20 text-discord text-xs font-bold">3</span>
+          <span class="priv-3-title">تخزين البيانات وحذفها (Retention & Deletion)</span>
+        </h4>
+        <p class="text-slate-300 text-sm leading-relaxed priv-3-desc">
+          نحتفظ بالإعدادات ومعرفات السيرفر فقط طالما أن البوت موجود في سيرفرك. يحق لأي مسؤول أو مستخدم طلب حذف جميع البيانات المرتبطة بحسابه أو سيرفره بالكامل عن طريق التواصل معنا عبر خادم الدعم الفني، وسيتم الحذف الفوري خلال مدة أقصاها 14 يوماً.
+        </p>
+      </article>
+
+      <!-- Policy 4 -->
+      <article class="p-6 rounded-2xl bg-discord-card border border-discord-border hover:border-discord/40 transition">
+        <h4 class="text-lg font-bold text-white mb-2 flex items-center gap-2.5">
+          <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-discord/20 text-discord text-xs font-bold">4</span>
+          <span class="priv-4-title">مشاركة البيانات مع أطراف ثالثة (Third-Party Sharing)</span>
+        </h4>
+        <p class="text-slate-300 text-sm leading-relaxed priv-4-desc">
+          <strong>نحن لا نقوم ببيع أو تأجير أو مشاركة أي بيانات للمستخدمين مع أي جهة خارجية أو معلنين مطلقاً.</strong> يتم نقل البيانات حصراً وبشكل مشفر بين خوادمنا ومخدمات شركة Discord Inc الرسمية لتشغيل الخدمة.
+        </p>
+      </article>
+
+      <!-- Policy 5 -->
+      <article class="p-6 rounded-2xl bg-discord-card border border-discord-border hover:border-discord/40 transition">
+        <h4 class="text-lg font-bold text-white mb-2 flex items-center gap-2.5">
+          <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-discord/20 text-discord text-xs font-bold">5</span>
+          <span class="priv-5-title">التواصل والدعم (Contact & Inquiries)</span>
+        </h4>
+        <p class="text-slate-300 text-sm leading-relaxed mb-3 priv-5-desc">
+          إذا كانت لديك أي استفسارات بخصوص هذه السياسة أو ترغب في تقديم طلب حذف بيانات، يمكنك التواصل معنا مباشرة عبر الوسائل التالية:
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="https://discord.gg" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-discord hover:bg-discord-hover text-white text-xs font-semibold transition">
+            <i class="fa-brands fa-discord"></i>
+            <span>سيرفر الدعم الفني (Support Server)</span>
+          </a>
+          <a href="mailto:support@example.com" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-discord-border/50 hover:bg-discord-border text-slate-200 text-xs font-semibold transition">
+            <i class="fa-regular fa-envelope"></i>
+            <span>support@example.com</span>
+          </a>
+        </div>
+      </article>
+    </section>
+
+    <!-- Bot Customizer Box for Developers -->
+    <div class="mt-12 p-5 rounded-2xl border border-dashed border-slate-700 bg-[#12141c]">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+          <i class="fa-solid fa-sliders text-discord"></i>
+          <span>تخصيص البيانات لمعلومات بوتك (Developer Customizer)</span>
+        </span>
+        <span class="text-[11px] text-slate-500">يتم التحديث مباشرة في الصفحة</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">اسم البوت (Bot Name):</label>
+          <input type="text" id="inputBotName" value="MyAwesomeBot" oninput="updateBotName(this.value)" class="w-full bg-[#1b1e2a] border border-slate-700 rounded-lg px-3 py-2 text-white outline-none focus:border-discord">
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">بريد الدعم (Support Email):</label>
+          <input type="email" id="inputEmail" value="support@myawesomebot.com" oninput="updateSupportEmail(this.value)" class="w-full bg-[#1b1e2a] border border-slate-700 rounded-lg px-3 py-2 text-white outline-none focus:border-discord">
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-discord-border/50 bg-[#0a0b0e] py-8 text-center text-xs text-slate-500">
+    <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p>&copy; 2026 <span id="footerBotName">MyAwesomeBot</span>. All rights reserved. Not affiliated with Discord Inc.</p>
+      <div class="flex items-center gap-4">
+        <button onclick="switchSection('terms')" class="hover:text-slate-300 transition">Terms</button>
+        <span class="text-slate-700">•</span>
+        <button onclick="switchSection('privacy')" class="hover:text-slate-300 transition">Privacy</button>
+        <span class="text-slate-700">•</span>
+        <a href="https://discord.com/developers/docs" target="_blank" class="hover:text-slate-300 transition">Discord Docs</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script for Interactivity, Tab Switching, Language Toggle & Copying -->
+  <script>
+    let currentLang = 'ar'; // Default language
+
+    const translations = {
+      ar: {
+        legalDocsLabel: "الوثائق القانونية والشروط",
+        tabTerms: "شروط الخدمة (ToS)",
+        tabPrivacy: "سياسة الخصوصية",
+        langBtn: "English",
+        verified: "متوافق مع سياسات Discord 2026",
+        updated: "آخر تحديث: 27 أكتوبر 2026",
+        mainTitle: "اتفاقية استخدام البوت والخصوصية",
+        mainSubtitle: "توضح هذه الصفحة الشروط والقواعد المتبعة لاستخدام البوت وكيفية حماية بياناتك.",
+        copyTerms: "نسخ رابط ToS",
+        copyPrivacy: "نسخ رابط الخصوصية",
+        share: "مشاركة الرابط",
+        copiedToast: "تم نسخ الرابط المباشر إلى الحافظة بنجاح!"
+      },
+      en: {
+        legalDocsLabel: "Legal Documents & Policies",
+        tabTerms: "Terms of Service",
+        tabPrivacy: "Privacy Policy",
+        langBtn: "العربية",
+        verified: "Discord App Directory Compliant 2026",
+        updated: "Last updated: October 27, 2026",
+        mainTitle: "Bot Terms of Service & Privacy Policy",
+        mainSubtitle: "This page clearly outlines the rules for using our bot and how your data is protected.",
+        copyTerms: "Copy ToS URL",
+        copyPrivacy: "Copy Privacy URL",
+        share: "Copy Link",
+        copiedToast: "Direct section URL copied to clipboard!"
+      }
+    };
+
+    function switchSection(sectionId) {
+      const termsSec = document.getElementById('terms');
+      const privSec = document.getElementById('privacy');
+      const tabTerms = document.getElementById('tabTermsBtn');
+      const tabPrivacy = document.getElementById('tabPrivacyBtn');
+
+      if (sectionId === 'terms') {
+        termsSec.classList.remove('hidden');
+        privSec.classList.add('hidden');
+        tabTerms.className = "px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 bg-discord text-white shadow-sm flex items-center gap-2";
+        tabPrivacy.className = "px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-white flex items-center gap-2";
+        window.history.replaceState(null, null, '#terms');
+      } else {
+        privSec.classList.remove('hidden');
+        termsSec.classList.add('hidden');
+        tabPrivacy.className = "px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 bg-discord text-white shadow-sm flex items-center gap-2";
+        tabTerms.className = "px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-white flex items-center gap-2";
+        window.history.replaceState(null, null, '#privacy');
+      }
+    }
+
+    // Direct section hash check on page load
+    window.onload = function() {
+      const hash = window.location.hash;
+      if (hash === '#privacy') {
+        switchSection('privacy');
+      } else {
+        switchSection('terms');
+      }
+    };
+
+    function copyCurrentUrl(section) {
+      const baseUrl = window.location.origin + window.location.pathname;
+      const targetUrl = baseUrl + '#' + section;
+      
+      // Fallback for iframe clipboard restrictions
+      const dummyInput = document.createElement('textarea');
+      dummyInput.value = targetUrl;
+      document.body.appendChild(dummyInput);
+      dummyInput.select();
+      try {
+        document.execCommand('copy');
+        showToast(translations[currentLang].copiedToast + ' (' + '#' + section + ')');
+      } catch (err) {
+        prompt("Copy this URL:", targetUrl);
+      }
+      document.body.removeChild(dummyInput);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = msg;
+      toast.classList.remove('opacity-0', 'translate-y-20');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-20');
+      }, 3000);
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      const htmlEl = document.documentElement;
+
+      if (currentLang === 'en') {
+        htmlEl.setAttribute('dir', 'ltr');
+        htmlEl.setAttribute('lang', 'en');
+        document.body.classList.remove('font-sans');
+        document.body.classList.add('font-en');
+      } else {
+        htmlEl.setAttribute('dir', 'rtl');
+        htmlEl.setAttribute('lang', 'ar');
+        document.body.classList.remove('font-en');
+        document.body.classList.add('font-sans');
+      }
+
+      // Update static translation labels
+      const t = translations[currentLang];
+      document.getElementById('legalDocsLabel').innerText = t.legalDocsLabel;
+      document.querySelector('.tab-text-terms').innerText = t.tabTerms;
+      document.querySelector('.tab-text-privacy').innerText = t.tabPrivacy;
+      document.getElementById('langBtnText').innerText = t.langBtn;
+      document.getElementById('verifiedLabel').innerText = t.verified;
+      document.getElementById('updatedDateLabel').innerText = t.updated;
+      document.getElementById('mainHeaderTitle').innerText = t.mainTitle;
+      document.getElementById('mainHeaderSubtitle').innerText = t.mainSubtitle;
+      document.getElementById('copyTermsBtn').innerText = t.copyTerms;
+      document.getElementById('copyPrivacyBtn').innerText = t.copyPrivacy;
+      document.querySelectorAll('.share-btn-text').forEach(btn => btn.innerText = t.share);
+    }
+
+    function updateBotName(name) {
+      const cleanName = name.trim() || 'MyBot';
+      document.getElementById('botNameDisplay').innerText = cleanName;
+      document.getElementById('footerBotName').innerText = cleanName;
+    }
+
+    function updateSupportEmail(email) {
+      const cleanEmail = email.trim() || 'support@example.com';
+      const mailLinks = document.querySelectorAll('a[href^="mailto:"]');
+      mailLinks.forEach(link => {
+        link.href = 'mailto:' + cleanEmail;
+        link.querySelector('span').innerText = cleanEmail;
+      });
+    }
+  </script>
+</body>
+</html>
